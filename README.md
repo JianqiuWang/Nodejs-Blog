@@ -1,31 +1,35 @@
-## 使用Nodejs+MongoDb构建多人博客
+# 使用Nodejs + Mongodb 构建多人博客系统
 
-技术方面使用了`nodejs，mongodb，Express框架，Kindeditor`等
+使用`Ejs`作为模板引擎，`nodejs`后端逻辑操作，`mongodb`进行数据存储
 
-#### 特点
-1. 使用Ejs模版引擎
-2. 实现了发表与编辑博文功能
-3. 实现了评论功能
+## 已实现功能
+
+1. 用户登录及注册功能,使用cookie进行数据持久化
+2. 实现了发表，编辑及删除博文功能
+3. 实现了文章评论功能
 4. 增加pv统计和留言统计
-5. 用户头像
-6. 新增日志功能
-7. 采用Kindeditor富文本编辑器
-8. 实现了分页功能
+5. 增加了标签功能
+6. 采用Kindeditor富文本编辑器
+7. 实现了文章分页功能
+8. 增加访问日志及错误日志功能
+9. 实现了图片上传功能
 
 ----------
-### 建立数据库
-在mondodb安装目录下新建blog文件夹
-###启动数据库
-命令：
+##  使用
 
-> mongod --dbpath ../blog
-###数据库操作
-命令：
-
-> mongo
-	
-> use blog
- 
-> db.users.find()
-
-> db.user.remove()
+clone源码
+```
+git clone https://github.com/TenderQ/node-Blog.git
+```
+下载依赖
+```
+npm install
+```
+打开数据库
+```
+mongod
+```
+启动应用
+```
+node app
+```

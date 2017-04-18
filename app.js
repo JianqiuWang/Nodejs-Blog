@@ -1,33 +1,35 @@
-// 加载依赖库，原来这个类库都封装在connect中，现在需地注单独加载
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var session = require('express-session');
 var flash = require('connect-flash');
 var MongoStore = require('connect-mongo')(session);
 // 加载路由控制
-var routes = require('../routes/index');
-var users = require('../routes/users');
-var settings = require('../settings');
+var routes = require('./routes/index');
+var settings = require('./settings');
 var multer = require('multer');
 var fs = require('fs');
+var open = require('open');
 var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'});
 var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'});
 // 创建项目实例
 var app = express();
+var port = process.env.PORT || 4000;
+var dbUrl = 'mongodb://localhost/blog';
 
 // 定义EJS模板引擎和模板文件位置，也可以使用jade或其他模型引擎
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 app.use(flash());
 // 定义icon图标 favicon in /public
-app.use(favicon(path.join(__dirname, '../public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, './public', 'favicon.ico')));
 // 定义日志和输出级别
 app.use(logger('dev'));
+app.use(logger({stream: accessLog}));
 app.use(function (err, req, res, next) {
   var meta = '[' + new Date() + '] ' + req.url + '\n';
   errorLog.write(meta + err.stack + '\n');
@@ -41,7 +43,7 @@ app.use(bodyParser.urlencoded({
 // 定义cookie解析器
 app.use(cookieParser());
 // 定义静态文件目录
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, './public')));
 
 app.use(multer({
   	dest: './public/image/upload',//上传图片存放文件夹
@@ -51,6 +53,8 @@ app.use(multer({
 }));
 
 app.use(session({
+	resave: false,  
+    saveUninitialized: true,
 	secret: settings.cookieSecret,
 	key: settings.db, //cookie name
 	cookie: {
@@ -60,13 +64,12 @@ app.use(session({
 		//  db: settings.db,
 		//  host: settings.host,
 		//  port: settings.port
-		url: 'mongodb://localhost/blog'
+		url: dbUrl
 	})
 }));
 
 // 匹配路径和路由
 routes(app);
-//app.use('/users', users);
 
 // 404错误处理
 app.use(function(req, res, next) {
@@ -97,5 +100,6 @@ app.use(function(err, req, res, next) {
 	});
 });
 
-//输出模型app
-module.exports = app;
+app.listen(port);
+console.log("server started on port:" + port);
+open('http://localhost:' + port);
