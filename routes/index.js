@@ -272,10 +272,14 @@ module.exports = function (app) {
 	});
 	app.post('/upload', checkLogin);
 	app.post('/upload', function (req, res) {
-		var path = req.files.imgFile.path;
-		path = path.replace(/public\\/g, "");
 		res.setHeader('Content-Type', 'application/json');
-		res.json({ code: "1", data: '文件上传成功！', "error": 0, "url": path });
+		if (req.files.imgFile){
+			var path = req.files.imgFile.path;
+			path = path.replace(/public\\/g, "");
+			res.json({ code: "1", data: '文件上传成功！', "error": 0, "url": path });
+			return;
+		}
+		res.json({ code: "1", data: '文件上传成功！'});
 	});
 	app.post('/editUpload', checkLogin);
 	app.post('/editUpload', function (req, res) {
